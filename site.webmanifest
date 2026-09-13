@@ -1,0 +1,17 @@
+{
+  "name": "Chirag Suthar — Python & Full-Stack Developer",
+  "short_name": "Chirag Suthar",
+  "description": "Chirag Suthar builds forensic-grade data and automation systems for cyber crime investigation, and high-end websites, dashboards and mobile apps for businesses across India.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#06070a",
+  "theme_color": "#06070a",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

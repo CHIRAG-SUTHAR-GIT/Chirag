@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chirag-suthar-git.github.io/Chirag/sitemap.xml

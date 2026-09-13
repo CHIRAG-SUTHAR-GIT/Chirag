@@ -1,0 +1,13 @@
+{
+  "name": "chirag-suthar-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio of Chirag Suthar — Python & full-stack developer. Static site, no runtime dependencies.",
+  "type": "module",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "serve": "python3 -m http.server 8000"
+  },
+  "author": "Chirag Suthar",
+  "license": "UNLICENSED"
+}
