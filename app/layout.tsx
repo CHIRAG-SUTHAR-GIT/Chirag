@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Serif, Inter, JetBrains_Mono } from 'next/font/google';
+import { Instrument_Serif, Inter, JetBrains_Mono, Quicksand, Nunito_Sans, Archivo_Black, Space_Mono } from 'next/font/google';
 import { site } from '@/lib/data/site';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
@@ -24,6 +24,34 @@ const mono = JetBrains_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+// Two more complete type systems for the neumorphism and brutalism themes —
+// see the `[data-theme="neu"]` / `[data-theme="brutal"]` token blocks in
+// globals.css, which point --serif/--sans/--mono at these per theme.
+const quicksand = Quicksand({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-quicksand',
+  display: 'swap',
+});
+const nunito = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['400', '600', '800'],
+  variable: '--font-nunito',
+  display: 'swap',
+});
+const archivoBlack = Archivo_Black({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-archivo',
+  display: 'swap',
+});
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-spacemono',
   display: 'swap',
 });
 
@@ -58,7 +86,7 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-const THEME_BOOT = `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+const THEME_BOOT = `(function(){try{var t=localStorage.getItem('cs-theme');if(t==='neu'||t==='brutal'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
 const personLd = {
   '@context': 'https://schema.org',
@@ -75,7 +103,11 @@ const personLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      data-theme="dark"
+      className={`${serif.variable} ${sans.variable} ${mono.variable} ${quicksand.variable} ${nunito.variable} ${archivoBlack.variable} ${spaceMono.variable}`}
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />

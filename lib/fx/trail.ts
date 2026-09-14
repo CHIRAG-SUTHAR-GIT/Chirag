@@ -46,7 +46,7 @@ export function initTrail(): Cleanup {
 
   const palette = () => {
     const cs = getComputedStyle(document.documentElement);
-    const light = document.documentElement.getAttribute('data-theme') === 'light';
+    const light = document.documentElement.getAttribute('data-theme') !== 'dark';
     return {
       accent: cs.getPropertyValue('--accent').trim() || '#ffb020',
       teal: cs.getPropertyValue('--accent-2').trim() || '#5eead4',

@@ -6,6 +6,7 @@ export const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a
 
 export const isReduced = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const isFine = () => typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+export const isBrutal = () => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'brutal';
 
 export type Cleanup = () => void;
 export const noop: Cleanup = () => {};

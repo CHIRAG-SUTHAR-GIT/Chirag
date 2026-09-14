@@ -4,18 +4,35 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { site, nav } from '@/lib/data/site';
-import { IconGithub, IconMoon, IconSun } from './icons';
+import { IconGithub, IconMoon, IconWaves, IconSquare } from './icons';
+
+const THEMES = ['dark', 'neu', 'brutal'] as const;
+type ThemeName = (typeof THEMES)[number];
+const THEME_META: Record<ThemeName, { label: string; color: string }> = {
+  dark: { label: 'Forensic dark', color: '#06070a' },
+  neu: { label: 'Neumorphism', color: '#e6e2da' },
+  brutal: { label: 'Brutalism', color: '#f5f3ee' },
+};
 
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
   const [hide, setHide] = useState(false);
+  const [theme, setTheme] = useState<ThemeName>('dark');
 
-  const toggleTheme = () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  // Pick up whatever the pre-hydration boot script already applied so the
+  // icon matches the live page instead of flashing to "dark" for a frame.
+  useEffect(() => {
+    const current = document.documentElement.getAttribute('data-theme');
+    if (current === 'neu' || current === 'brutal' || current === 'dark') setTheme(current);
+  }, []);
+
+  const cycleTheme = () => {
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    setTheme(next);
     document.documentElement.setAttribute('data-theme', next);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'light' ? '#f6f5f2' : '#06070a');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_META[next].color);
     try {
       localStorage.setItem('cs-theme', next);
     } catch {
@@ -82,9 +99,16 @@ export function Header() {
             <a className="icon-btn" href={site.github} target="_blank" rel="noopener" aria-label="Open GitHub profile" data-cursor="GitHub">
               <IconGithub />
             </a>
-            <button className="icon-btn theme-btn" type="button" aria-label="Switch colour theme" onClick={toggleTheme}>
-              <IconMoon />
-              <IconSun />
+            <button
+              className="icon-btn theme-btn"
+              type="button"
+              aria-label={`Switch to ${THEME_META[THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]].label} theme`}
+              title={`Theme: ${THEME_META[theme].label} — click to switch`}
+              onClick={cycleTheme}
+            >
+              {theme === 'dark' && <IconMoon />}
+              {theme === 'neu' && <IconWaves />}
+              {theme === 'brutal' && <IconSquare />}
             </button>
             <Link className="btn btn--sm btn--solid hide-sm" href="/contact">
               Start a project

@@ -1,8 +1,9 @@
-import { $, $$, lerp, isReduced, isFine, type Cleanup } from './util';
+import { $, $$, lerp, isReduced, isFine, isBrutal, type Cleanup } from './util';
 
-/** Subtle 3D tilt on `[data-tilt]` cards (the featured work grid). */
+/** Subtle 3D tilt on `[data-tilt]` cards (the featured work grid). Skipped
+ * in brutalism, which stays flat and rigid on purpose. */
 export function initTilt(): Cleanup {
-  if (!isFine() || isReduced()) return () => {};
+  if (!isFine() || isReduced() || isBrutal()) return () => {};
   const cards = $$<HTMLElement>('[data-tilt]');
   if (!cards.length) return () => {};
 

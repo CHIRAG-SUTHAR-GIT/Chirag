@@ -36,6 +36,23 @@ export function IconSun({ className }: { className?: string }) {
   );
 }
 
+export function IconWaves({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+      <path d="M2.5 9c1.4-1.8 3.3-1.8 4.7 0s3.3 1.8 4.7 0 3.3-1.8 4.7 0 3.3 1.8 4.7 0" />
+      <path d="M2.5 15.5c1.4-1.8 3.3-1.8 4.7 0s3.3 1.8 4.7 0 3.3-1.8 4.7 0 3.3 1.8 4.7 0" />
+    </svg>
+  );
+}
+
+export function IconSquare({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+      <rect x="4.2" y="4.2" width="15.6" height="15.6" />
+    </svg>
+  );
+}
+
 export function IconLock({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

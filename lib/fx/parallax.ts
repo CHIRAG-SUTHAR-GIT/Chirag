@@ -1,9 +1,10 @@
-import { $$, isReduced, type Cleanup } from './util';
+import { $$, isReduced, isBrutal, type Cleanup } from './util';
 
-/** Light scroll parallax for `[data-para]` elements (the case-study cover shot). */
+/** Light scroll parallax for `[data-para]` elements (the case-study cover
+ * shot). Skipped in brutalism, which stays flat and rigid on purpose. */
 export function initParallax(): Cleanup {
   const els = $$<HTMLElement>('[data-para]');
-  if (!els.length || isReduced()) return () => {};
+  if (!els.length || isReduced() || isBrutal()) return () => {};
 
   const onScroll = () => {
     const vh = innerHeight;
