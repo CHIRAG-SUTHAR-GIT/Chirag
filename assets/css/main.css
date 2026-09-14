@@ -1110,6 +1110,35 @@ body.leaving .curtain { animation: curtainUp 0.55s var(--ease-io) forwards; }
 [data-theme="light"] .fscan { opacity: 0.4; }
 @media (prefers-reduced-motion: reduce) { .fscan { display: none; } }
 
+/* ---------- ambient terminal feeds (live "sudo" / tree / ps snippets) ---------- */
+.term-feed {
+  position: fixed;
+  z-index: 0;
+  width: min(300px, 25vw);
+  pointer-events: none;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.7;
+  color: var(--accent-2);
+  opacity: 0.62;
+}
+.term-feed pre { margin: 0; white-space: pre; }
+[data-theme="light"] .term-feed { opacity: 0.4; }
+.term-feed--tl { top: calc(var(--nav-h) + 32px); left: var(--gut); height: 10em; }
+.term-feed--br { bottom: 92px; right: var(--gut); height: 10em; text-align: right; }
+.term-feed--br pre { text-align: left; display: inline-block; }
+.term-feed__caret {
+  display: inline-block;
+  width: 6px; height: 1em;
+  background: var(--accent-2);
+  vertical-align: -0.15em;
+  margin-left: 2px;
+  animation: caret 1s step-end infinite;
+}
+@media (max-width: 1220px), (max-height: 720px) { .term-feed { display: none; } }
+@media (prefers-reduced-motion: reduce) { .term-feed { display: none; } }
+
 /* ---------- GitHub card (hero widget) ---------- */
 .ghcard {
   border: 1px solid var(--line);
@@ -1334,7 +1363,7 @@ body.leaving .curtain { animation: curtainUp 0.55s var(--ease-io) forwards; }
 
 /* ---------- print ---------- */
 @media print {
-  .hdr, .mmenu, .pre, .grain, .glow, .cur, .cur-dot, .hero__canvas, .curtain, .peek, .fscan { display: none !important; }
+  .hdr, .mmenu, .pre, .grain, .glow, .cur, .cur-dot, .hero__canvas, .curtain, .peek, .fscan, .term-feed { display: none !important; }
   body { background: #fff; color: #000; }
   a { color: #000; }
 }
