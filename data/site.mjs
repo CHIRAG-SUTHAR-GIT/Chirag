@@ -22,12 +22,14 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/ch1rag',
   linkedinHandle: 'in/ch1rag',
   availability: 'Available for freelance and contract work',
+  resumePdf: 'assets/resume/chirag-suthar-resume.pdf',
 };
 
 export const nav = [
   { label: 'Work', href: 'work.html' },
   { label: 'Services', href: 'services.html' },
   { label: 'About', href: 'about.html' },
+  { label: 'Résumé', href: 'resume.html' },
   { label: 'Contact', href: 'contact.html' },
 ];
 

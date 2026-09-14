@@ -402,6 +402,208 @@
   };
 
   /* ------------------------------------------------------------------ *
+   * Ambient forensic network — a quiet, site-wide backdrop in the same
+   * visual language as the case-study flow diagrams: nodes, edges,
+   * drifting packets, and a slow scanning sweep. Injected at runtime so
+   * every page gets it without touching every template.
+   * ------------------------------------------------------------------ */
+  const Forensic = {
+    init() {
+      if (reduced) return;
+      const cv = document.createElement('canvas');
+      cv.className = 'fscan';
+      cv.setAttribute('aria-hidden', 'true');
+      document.body.insertBefore(cv, document.body.firstChild);
+      const ctx = cv.getContext('2d', { alpha: true });
+      if (!ctx) return;
+
+      let W = 0, H = 0, dpr = 1, nodes = [], edges = [], packets = [], raf = 0, running = true, sweep = -0.25;
+
+      const palette = () => {
+        const cs = getComputedStyle(document.documentElement);
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        return {
+          accent: cs.getPropertyValue('--accent').trim() || '#ffb020',
+          teal: cs.getPropertyValue('--accent-2').trim() || '#5eead4',
+          line: light ? 'rgba(10,14,20,0.55)' : 'rgba(255,255,255,0.55)',
+        };
+      };
+      let col = palette();
+      window.addEventListener('themechange', () => { col = palette(); });
+
+      const build = () => {
+        dpr = Math.min(1.6, window.devicePixelRatio || 1);
+        W = innerWidth; H = innerHeight;
+        cv.width = Math.floor(W * dpr);
+        cv.height = Math.floor(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const cols = W < 760 ? 5 : 9;
+        const rows = W < 760 ? 7 : 5;
+        nodes = [];
+        for (let c = 0; c < cols; c++) {
+          for (let r = 0; r < rows; r++) {
+            if (Math.random() < 0.44) continue;
+            nodes.push({
+              x: (c + 0.5 + (Math.random() - 0.5) * 0.6) * (W / cols),
+              y: (r + 0.5 + (Math.random() - 0.5) * 0.6) * (H / rows),
+              ph: Math.random() * Math.PI * 2,
+              r: 1.2 + Math.random() * 1.5,
+              sq: Math.random() < 0.16,
+            });
+          }
+        }
+        const cellDiag = (W / cols) ** 2 + (H / rows) ** 2;
+        edges = [];
+        nodes.forEach((n, i) => {
+          nodes
+            .map((m, j) => ({ m, j, d: (m.x - n.x) ** 2 + (m.y - n.y) ** 2 }))
+            .filter((x) => x.j !== i)
+            .sort((a, b) => a.d - b.d)
+            .slice(0, 1)
+            .forEach((x) => { if (x.d < cellDiag * 1.4) edges.push({ a: n, b: x.m }); });
+        });
+        packets = [];
+        const seed = Math.min(16, Math.round(edges.length * 0.55));
+        for (let i = 0; i < seed; i++) spawn();
+      };
+
+      const spawn = () => {
+        const e = edges[(Math.random() * edges.length) | 0];
+        if (!e) return;
+        packets.push({ e, t: Math.random(), sp: 0.0008 + Math.random() * 0.0014 });
+      };
+
+      const draw = (time) => {
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = col.line;
+        ctx.globalAlpha = 0.16;
+        edges.forEach((e) => {
+          ctx.beginPath();
+          ctx.moveTo(e.a.x, e.a.y);
+          ctx.lineTo(e.b.x, e.b.y);
+          ctx.stroke();
+        });
+
+        nodes.forEach((n) => {
+          const pulse = 0.5 + Math.sin(time * 0.0009 + n.ph) * 0.5;
+          ctx.globalAlpha = 0.12 + pulse * 0.16;
+          if (n.sq) {
+            const s = n.r + 1.4;
+            ctx.strokeStyle = col.line;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(n.x - s, n.y - s, s * 2, s * 2);
+          } else {
+            ctx.fillStyle = col.line;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+
+        packets.forEach((p) => {
+          p.t += p.sp;
+          if (p.t > 1) { p.t = 0; p.e = edges[(Math.random() * edges.length) | 0]; }
+          if (!p.e) return;
+          const x = p.e.a.x + (p.e.b.x - p.e.a.x) * p.t;
+          const y = p.e.a.y + (p.e.b.y - p.e.a.y) * p.t;
+          const fade = Math.sin(Math.PI * p.t);
+          ctx.fillStyle = col.accent;
+          ctx.globalAlpha = 0.18 + fade * 0.42;
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // forensic scan sweep — a thin band moving slowly down the viewport
+        sweep += 0.00022;
+        if (sweep > 1.3) sweep = -0.3;
+        const sy = sweep * H;
+        const grad = ctx.createLinearGradient(0, sy - 70, 0, sy + 70);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(0.5, col.teal);
+        grad.addColorStop(1, 'transparent');
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, sy - 70, W, 140);
+        ctx.globalAlpha = 0.3;
+        ctx.strokeStyle = col.teal;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, sy);
+        ctx.lineTo(W, sy);
+        ctx.stroke();
+
+        ctx.globalAlpha = 1;
+        raf = requestAnimationFrame(draw);
+      };
+
+      const start = () => { if (!running) { running = true; raf = requestAnimationFrame(draw); } };
+      const stop = () => { running = false; cancelAnimationFrame(raf); };
+
+      build();
+      raf = requestAnimationFrame(draw);
+
+      let rt;
+      window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 250); });
+      document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+      setInterval(() => { if (running && packets.length < 22) spawn(); }, 3400);
+    },
+  };
+
+  /* ------------------------------------------------------------------ *
+   * GitHub card — live stats fetched client-side for the hero widget.
+   * Degrades quietly: avatar and link always work, numbers show em-dashes
+   * if the API is unreachable, the contribution chart removes itself on
+   * a failed load.
+   * ------------------------------------------------------------------ */
+  const GitHubCard = {
+    init() {
+      const el = $('[data-ghcard]');
+      if (!el) return;
+      const user = el.dataset.ghUser;
+      if (!user) return;
+
+      const avatar = $('[data-gh-avatar]', el);
+      const fallback = $('[data-gh-avatar-fallback]', el);
+      if (avatar) {
+        avatar.addEventListener('load', () => { avatar.hidden = false; if (fallback) fallback.hidden = true; }, { once: true });
+        avatar.addEventListener('error', () => { avatar.hidden = true; if (fallback) fallback.hidden = false; }, { once: true });
+        avatar.src = `https://github.com/${user}.png?size=96`;
+      }
+
+      const chart = $('[data-gh-chart]', el);
+      if (chart) {
+        chart.src = `https://ghchart.rshah.org/ffb020/${user}`;
+        chart.addEventListener('error', () => { chart.closest('.ghcard__chartwrap')?.remove(); }, { once: true });
+      }
+
+      fetch(`https://api.github.com/users/${user}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (!d) return;
+          const repos = $('[data-gh-repos]', el);
+          if (repos && typeof d.public_repos === 'number') repos.textContent = d.public_repos.toLocaleString('en-IN');
+          const followers = $('[data-gh-followers]', el);
+          if (followers && typeof d.followers === 'number') followers.textContent = d.followers.toLocaleString('en-IN');
+        })
+        .catch(() => {});
+
+      fetch(`https://api.github.com/users/${user}/repos?per_page=100`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((list) => {
+          if (!Array.isArray(list)) return;
+          const stars = list.reduce((s, r) => s + (r.stargazers_count || 0), 0);
+          const el2 = $('[data-gh-stars]', el);
+          if (el2) el2.textContent = stars.toLocaleString('en-IN');
+        })
+        .catch(() => {});
+    },
+  };
+
+  /* ------------------------------------------------------------------ *
    * Horizontal pinned services
    * ------------------------------------------------------------------ */
   const HScroll = {
@@ -672,6 +874,11 @@
   const Year = { init() { $$('[data-year]').forEach((e) => (e.textContent = new Date().getFullYear())); } };
 
   /* ------------------------------------------------------------------ *
+   * Print trigger (résumé page)
+   * ------------------------------------------------------------------ */
+  const PrintBtn = { init() { $$('[data-print]').forEach((b) => b.addEventListener('click', () => window.print())); } };
+
+  /* ------------------------------------------------------------------ *
    * Boot
    * ------------------------------------------------------------------ */
   const boot = () => {
@@ -680,10 +887,12 @@
     Pre.init();
     Cursor.init();
     Glow.init();
+    Forensic.init();
     Header.init();
     Reveal.init();
     Counters.init();
     Trail.init();
+    GitHubCard.init();
     HScroll.init();
     Tilt.init();
     Parallax.init();
@@ -691,6 +900,7 @@
     Faq.init();
     Contact.init();
     Copy.init();
+    PrintBtn.init();
     Trans.init();
     ActiveNav.init();
     Year.init();

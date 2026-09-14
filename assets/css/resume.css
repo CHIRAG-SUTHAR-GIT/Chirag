@@ -1,0 +1,108 @@
+/* =========================================================================
+   Résumé sheet.
+   A résumé is paper and ink, independent of whatever theme the visitor has
+   the rest of the site in — so this stylesheet defines its own token set
+   and never reads the site's --bg/--text tokens. Loaded only on resume.html.
+   ========================================================================= */
+
+.resume-stage { position: relative; }
+
+.sheet {
+  --ink: #14181f;
+  --body: #3b4450;
+  --muted: #707b88;
+  --accent: #a9660c;
+  --hair: #e4e2db;
+  --paper: #fffdf9;
+
+  background: var(--paper);
+  color: var(--body);
+  border-radius: 16px;
+  padding: clamp(1.75rem, 5vw, 3.25rem);
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  max-width: 900px;
+  margin-inline: auto;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.sheet__head { border-bottom: 2px solid var(--ink); padding-bottom: 1.2rem; margin-bottom: 1.85rem; }
+.sheet__name {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(1.9rem, 4.4vw, 2.6rem);
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.3rem;
+  font-weight: 400;
+}
+.sheet__role { font-size: 1rem; font-weight: 500; color: var(--accent); margin: 0 0 1rem; }
+.sheet__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+.sheet__contact a { color: var(--body); text-decoration: none; border-bottom: 1px solid var(--hair); }
+.sheet__contact a:hover { color: var(--accent); border-color: var(--accent); }
+
+.sheet__grid { display: grid; gap: 2.5rem; }
+@media (min-width: 760px) { .sheet__grid { grid-template-columns: minmax(0, 1fr) 235px; } }
+
+.sheet__sec + .sheet__sec { margin-top: 1.85rem; }
+.sheet__sec h3 {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 0.9rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--hair);
+}
+.sheet__sec > p { margin: 0; font-size: 0.92rem; line-height: 1.62; }
+
+.sheet__job + .sheet__job { margin-top: 1.35rem; }
+.sheet__jobtitle { font-family: "Instrument Serif", serif; font-size: 1.18rem; color: var(--ink); margin: 0; font-weight: 400; }
+.sheet__jobrole { font-size: 0.85rem; font-weight: 500; margin: 0.15rem 0 0; }
+.sheet__jobdates { font-size: 0.78rem; color: var(--muted); margin: 0.1rem 0 0.65rem; }
+.sheet__job ul { margin: 0; padding-left: 1.1rem; }
+.sheet__job li { font-size: 0.85rem; line-height: 1.55; margin-bottom: 0.35rem; }
+.sheet__job li::marker { color: var(--accent); }
+
+.sheet__proj + .sheet__proj { border-top: 1px solid var(--hair); padding-top: 0.9rem; margin-top: 0.9rem; }
+.sheet__pname { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem; font-family: "Instrument Serif", serif; font-size: 1.04rem; color: var(--ink); }
+.sheet__ptag { font-size: 0.68rem; color: var(--muted); font-family: "Inter", sans-serif; }
+.sheet__pdesc { font-size: 0.83rem; line-height: 1.55; margin: 0.35rem 0 0; }
+.sheet__plink { display: inline-block; margin-top: 0.35rem; font-size: 0.76rem; color: var(--accent); word-break: break-all; text-decoration: none; }
+.sheet__plink:hover { text-decoration: underline; }
+.sheet__footnote { font-size: 0.78rem; color: var(--muted); margin-top: 1.15rem; }
+
+.sheet__stat { border-left: 2px solid var(--accent); padding: 0.1rem 0 0.1rem 0.75rem; margin-bottom: 0.95rem; }
+.sheet__stat b { display: block; font-family: "Instrument Serif", serif; font-size: 1.4rem; color: var(--ink); font-weight: 400; }
+.sheet__stat span { font-size: 0.76rem; color: var(--muted); }
+
+.sheet__skill { margin-bottom: 0.9rem; }
+.sheet__skill h4 { font-size: 0.72rem; font-weight: 600; color: var(--ink); margin: 0 0 0.2rem; }
+.sheet__skill p { font-size: 0.78rem; line-height: 1.5; margin: 0; color: var(--body); }
+
+@media (max-width: 640px) { .sheet { border-radius: 0; } }
+
+/* -------------------------------------------------------------- printing */
+@page { size: A4; margin: 12mm 13mm; }
+@media print {
+  .phero, .cta, .ftr, .fscan { display: none !important; }
+  .resume-stage { padding: 0 !important; }
+  .wrap { max-width: none; padding: 0; }
+  .sheet {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: none;
+    padding: 0;
+    font-size: 10pt;
+  }
+  .sheet__grid { grid-template-columns: minmax(0, 1fr) 190px; gap: 1.5rem; }
+  .sheet__name { font-size: 22pt; }
+  body { background: #fff; }
+}

@@ -120,7 +120,7 @@ function artwork(kind, accent = '#ffb020', label = '') {
 /* ------------------------------------------------------------ fragments */
 const themeBoot = `<script>(function(){try{var t=localStorage.getItem('cs-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>`;
 
-function head({ title, desc, path = '', og = 'assets/img/og.png', jsonld = '' }) {
+function head({ title, desc, path = '', og = 'assets/img/og.png', jsonld = '', extraCss = [] }) {
   const base = path.startsWith('work/') ? '../' : '';
   const url = `${site.url}/${path}`;
   return `<!doctype html>
@@ -154,6 +154,7 @@ function head({ title, desc, path = '', og = 'assets/img/og.png', jsonld = '' })
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${base}assets/css/main.css">
+${extraCss.map((href) => `<link rel="stylesheet" href="${base}${href}">`).join('\n')}
 ${themeBoot}
 ${jsonld ? `<script type="application/ld+json">${jsonld}</script>` : ''}
 </head>
@@ -188,6 +189,7 @@ function header(path = '') {
       ${nav.map((n) => `<a href="${base}${n.href}">${esc(n.label)}</a>`).join('\n      ')}
     </nav>
     <div class="hdr__side">
+      <a class="icon-btn" href="${site.github}" target="_blank" rel="noopener" aria-label="Open GitHub profile" data-cursor="GitHub">${I.github}</a>
       <button class="icon-btn theme-btn" data-theme-toggle type="button" aria-label="Switch colour theme">${I.moon}${I.sun}</button>
       <a class="btn btn--sm btn--solid hide-sm" href="${base}contact.html">Start a project</a>
       <button class="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mmenu"><i></i><i></i></button>
@@ -308,6 +310,29 @@ function workCard(p, i, base = '') {
 </article>`;
 }
 
+/* -------------------------------------------------------------- GitHub card */
+function ghCard() {
+  return `<div class="ghcard rv rv-d3" data-ghcard data-gh-user="${attr(site.githubHandle)}">
+    <div class="ghcard__top">
+      <span class="ghcard__avatar ghcard__avatar--fallback" data-gh-avatar-fallback aria-hidden="true">CS</span>
+      <img class="ghcard__avatar" data-gh-avatar width="40" height="40" alt="${attr(site.name)} on GitHub" loading="lazy" decoding="async" hidden>
+      <div class="ghcard__id">
+        <span class="ghcard__name">@${esc(site.githubHandle)}</span>
+        <span class="ghcard__sub"><i></i>Live from GitHub</span>
+      </div>
+      <a class="ghcard__link" href="${site.github}" target="_blank" rel="noopener" aria-label="Open GitHub profile">${I.arrow}</a>
+    </div>
+    <div class="ghcard__stats">
+      <div><b data-gh-repos>—</b><span>Repos</span></div>
+      <div><b data-gh-followers>—</b><span>Followers</span></div>
+      <div><b data-gh-stars>—</b><span>Stars</span></div>
+    </div>
+    <div class="ghcard__chartwrap">
+      <img class="ghcard__chart" data-gh-chart alt="${attr(site.name)}’s GitHub contribution graph" loading="lazy" decoding="async">
+    </div>
+  </div>`;
+}
+
 /* ------------------------------------------------------------------ home */
 function pageIndex() {
   const jsonld = JSON.stringify({
@@ -351,7 +376,8 @@ ${header()}
         <div class="hero__meta">
           <span class="avail rv rv-d2"><i></i>${esc(site.availability)}</span>
           <p class="hero__intro rv rv-d2">${esc(hero.intro)}</p>
-          <div class="hero__cta rv rv-d3">
+          ${ghCard()}
+          <div class="hero__cta rv rv-d4">
             <a class="btn btn--solid" href="work.html" data-cursor="View">See the work ${I.arrow}</a>
             <a class="btn" href="contact.html">Start a project</a>
           </div>
@@ -663,6 +689,10 @@ ${header()}
         <div class="rv rv-d2" style="display:grid;gap:1.25rem">
           <p class="lede">Most of my week is spent inside cyber crime data: bank statements by the million rows, complaint exports, portal work that used to be done by hand. The rest goes to businesses who need a website, a dashboard or an app that actually moves their numbers.</p>
           <p class="lede">The two halves teach each other. Investigation work makes you paranoid about correctness. Client work makes you honest about deadlines.</p>
+          <div class="cta__row" style="justify-content:flex-start">
+            <a class="btn btn--solid" href="resume.html" data-cursor="Résumé">View résumé ${I.arrow}</a>
+            <a class="btn" href="${site.resumePdf}" download>Download PDF ${I.arrow}</a>
+          </div>
         </div>
       </div>
     </div>
@@ -771,67 +801,91 @@ ${header()}
 
   <section class="section--tight">
     <div class="wrap two-col">
-      <form class="ccard rv" data-contact-form data-email="${attr(site.email)}" data-wa="${attr(site.whatsapp)}" novalidate>
-        <div class="field">
-          <label for="f-name">Your name *</label>
-          <input id="f-name" name="name" type="text" autocomplete="name" required>
+      <div class="term rv">
+        <div class="term__bar">
+          <span class="term__dots"><i></i><i></i><i></i></span>
+          <span class="term__title">compose.sh — chirag@portfolio</span>
         </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="f-org">Company</label>
-            <input id="f-org" name="org" type="text" autocomplete="organization">
+        <form class="term__body" data-contact-form data-email="${attr(site.email)}" data-wa="${attr(site.whatsapp)}" novalidate>
+          <p class="term__line"><span class="term__prompt">$</span> new-brief <span class="term__flag">--to=chirag</span></p>
+
+          <div class="term__field">
+            <label for="f-name"><span class="term__key">name</span><span class="term__op">=</span></label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="&quot;Your name&quot;">
           </div>
-          <div class="field">
-            <label for="f-email">Email</label>
-            <input id="f-email" name="email" type="email" autocomplete="email">
+
+          <div class="term__row">
+            <div class="term__field">
+              <label for="f-org"><span class="term__key">company</span><span class="term__op">=</span></label>
+              <input id="f-org" name="org" type="text" autocomplete="organization" placeholder="&quot;optional&quot;">
+            </div>
+            <div class="term__field">
+              <label for="f-email"><span class="term__key">email</span><span class="term__op">=</span></label>
+              <input id="f-email" name="email" type="email" autocomplete="email" placeholder="&quot;you@company.com&quot;">
+            </div>
           </div>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="f-kind">Project type</label>
-            <select id="f-kind" name="kind">
-              <option>Website</option>
-              <option>Web platform with admin</option>
-              <option>Data or analytics tool</option>
-              <option>Automation</option>
-              <option>Android app</option>
-              <option>Something else</option>
-            </select>
+
+          <div class="term__row">
+            <div class="term__field">
+              <label for="f-kind"><span class="term__key">type</span><span class="term__op">=</span></label>
+              <select id="f-kind" name="kind">
+                <option>Website</option>
+                <option>Web platform with admin</option>
+                <option>Data or analytics tool</option>
+                <option>Automation</option>
+                <option>Android app</option>
+                <option>Something else</option>
+              </select>
+            </div>
+            <div class="term__field">
+              <label for="f-budget"><span class="term__key">budget</span><span class="term__op">=</span></label>
+              <select id="f-budget" name="budget">
+                <option>Not sure yet</option>
+                <option>Under ₹50,000</option>
+                <option>₹50,000 – ₹1,50,000</option>
+                <option>₹1,50,000 – ₹5,00,000</option>
+                <option>Above ₹5,00,000</option>
+              </select>
+            </div>
           </div>
-          <div class="field">
-            <label for="f-budget">Budget range</label>
-            <select id="f-budget" name="budget">
-              <option>Not sure yet</option>
-              <option>Under ₹50,000</option>
-              <option>₹50,000 – ₹1,50,000</option>
-              <option>₹1,50,000 – ₹5,00,000</option>
-              <option>Above ₹5,00,000</option>
-            </select>
+
+          <div class="term__field">
+            <label for="f-msg"><span class="term__key">brief</span><span class="term__op">=</span></label>
+            <textarea id="f-msg" name="message" required placeholder="&quot;What the software has to do, who will use it, and when you need it.&quot;"></textarea>
           </div>
-        </div>
-        <div class="field">
-          <label for="f-msg">What are you building? *</label>
-          <textarea id="f-msg" name="message" required placeholder="What the software has to do, who will use it, and when you need it."></textarea>
-        </div>
-        <div class="cta__row" style="justify-content:flex-start">
-          <button class="btn btn--solid" type="submit">Send by email ${I.arrow}</button>
-          <button class="btn" type="button" data-wa-send>Send on WhatsApp ${I.arrow}</button>
-        </div>
-        <p class="form-note" data-form-status>No form backend, nothing stored: the button opens your own email app or WhatsApp with the message already written.</p>
-      </form>
+
+          <div class="term__actions">
+            <button class="term__run" type="submit"><span class="term__prompt">$</span> send <span class="term__flag">--via=email</span></button>
+            <button class="term__run term__run--ghost" type="button" data-wa-send><span class="term__prompt">$</span> send <span class="term__flag">--via=whatsapp</span></button>
+          </div>
+          <p class="term__out" data-form-status>no backend — this opens your email app or WhatsApp with the message already written.</p>
+        </form>
+      </div>
 
       <div class="rv rv-d1" style="display:grid;gap:1.5rem;align-content:start">
-        <div>
-          <p class="eyebrow">Direct</p>
-          <div class="chan" style="margin-top:1rem">
-            <a href="mailto:${site.email}"><span><span class="chan__k">Email</span><span class="chan__v">${esc(site.email)}</span></span>${I.arrow}</a>
-            <a href="tel:${site.phoneHref}"><span><span class="chan__k">Phone</span><span class="chan__v">${esc(site.phone)}</span></span>${I.arrow}</a>
-            <a href="https://wa.me/${site.whatsapp}" target="_blank" rel="noopener"><span><span class="chan__k">WhatsApp</span><span class="chan__v">${esc(site.phone)}</span></span>${I.arrow}</a>
-            <a href="${site.github}" target="_blank" rel="noopener"><span><span class="chan__k">GitHub</span><span class="chan__v">${esc(site.githubHandle)}</span></span>${I.arrow}</a>
-            <a href="${site.linkedin}" target="_blank" rel="noopener"><span><span class="chan__k">LinkedIn</span><span class="chan__v">${esc(site.linkedinHandle)}</span></span>${I.arrow}</a>
+        <div class="term">
+          <div class="term__bar">
+            <span class="term__dots"><i></i><i></i><i></i></span>
+            <span class="term__title">whoami.json</span>
+          </div>
+          <div class="term__body term__body--out">
+            <p class="term__line"><span class="term__prompt">$</span> cat whoami.json</p>
+            <pre class="term__json">{
+  <span class="term__jk">"name"</span>: <span class="term__jv">"${esc(site.name)}"</span>,
+  <span class="term__jk">"role"</span>: <span class="term__jv">"${esc(site.role)}"</span>,
+  <span class="term__jk">"location"</span>: <span class="term__jv">"${esc(site.location)}"</span>,
+  <span class="term__jk">"email"</span>: <span class="term__jv">"<a href="mailto:${site.email}">${esc(site.email)}</a>"</span>,
+  <span class="term__jk">"phone"</span>: <span class="term__jv">"<a href="tel:${site.phoneHref}">${esc(site.phone)}</a>"</span>,
+  <span class="term__jk">"whatsapp"</span>: <span class="term__jv">"<a href="https://wa.me/${site.whatsapp}" target="_blank" rel="noopener">${esc(site.phone)}</a>"</span>,
+  <span class="term__jk">"github"</span>: <span class="term__jv">"<a href="${site.github}" target="_blank" rel="noopener">${esc(site.githubHandle)}</a>"</span>,
+  <span class="term__jk">"linkedin"</span>: <span class="term__jv">"<a href="${site.linkedin}" target="_blank" rel="noopener">${esc(site.linkedinHandle)}</a>"</span>,
+  <span class="term__jk">"status"</span>: <span class="term__jv">"${esc(site.availability)}"</span>
+}</pre>
           </div>
         </div>
+
         <div class="note">${I.info}<span>Based in ${esc(site.location)}, working with clients anywhere. Comfortable in English, Hindi and Gujarati.</span></div>
+
         <div>
           <p class="eyebrow">Before you write</p>
           <ul class="checks" style="margin-top:1rem">
@@ -1025,6 +1079,119 @@ ${footer('work/')}
 ${foot('work/')}`;
 }
 
+/* ------------------------------------------------------------- resume.html */
+function resumeProjectBlock(p) {
+  const live = p.links.find((l) => l.kind === 'live');
+  return `<div class="sheet__proj">
+        <span class="sheet__pname">${esc(p.title)}<span class="sheet__ptag">${esc(p.tag)}</span></span>
+        <p class="sheet__pdesc">${esc(p.summary)}</p>
+        ${live ? `<a class="sheet__plink" href="${attr(live.href)}" target="_blank" rel="noopener">${esc(live.href.replace(/^https?:\/\//, '').replace(/\/$/, ''))}</a>` : ''}
+      </div>`;
+}
+
+function resumeJobBlock(t) {
+  return `<div class="sheet__job">
+        <p class="sheet__jobtitle">${esc(t.org)}</p>
+        <p class="sheet__jobrole">${esc(t.role)}</p>
+        <p class="sheet__jobdates">${esc(t.period)}</p>
+        <ul>${t.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul>
+      </div>`;
+}
+
+function pageResume() {
+  const topProjects = projects.filter((p) => p.featured).slice(0, 6);
+  return `${head({
+    title: `Résumé — ${site.name}`,
+    desc: `Downloadable résumé for ${site.name}, ${site.role}: experience, technical skills and selected projects.`,
+    path: 'resume.html',
+    extraCss: ['assets/css/resume.css'],
+  })}
+${header()}
+<main id="main">
+  <section class="phero">
+    <div class="wrap">
+      <div class="phero__grid">
+        <div>
+          <p class="eyebrow line-mask"><span>Résumé</span></p>
+          <h1 class="d1" style="margin-top:1.2rem">
+            <span class="line-mask"><span>One document,</span></span>
+            <span class="line-mask"><span class="it accent">the short version.</span></span>
+          </h1>
+        </div>
+        <p class="lede rv rv-d2">Everything below also lives on this site in more detail. This is the version you can save, print or forward.</p>
+      </div>
+      <div class="cta__row rv rv-d3" style="justify-content:flex-start;margin-top:2rem">
+        <a class="btn btn--solid" href="${site.resumePdf}" download data-cursor="Download">Download PDF ${I.arrow}</a>
+        <button class="btn" type="button" data-print>Print this page</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight resume-stage">
+    <div class="wrap">
+      <div class="sheet rv">
+        <header class="sheet__head">
+          <h2 class="sheet__name">${esc(site.name)}</h2>
+          <p class="sheet__role">${esc(site.role)}</p>
+          <ul class="sheet__contact">
+            <li><a href="tel:${site.phoneHref}">${esc(site.phone)}</a></li>
+            <li><a href="mailto:${site.email}">${esc(site.email)}</a></li>
+            <li><a href="${site.github}" target="_blank" rel="noopener">${esc(site.github.replace('https://', ''))}</a></li>
+            <li><a href="${site.linkedin}" target="_blank" rel="noopener">linkedin.com/${esc(site.linkedinHandle)}</a></li>
+            <li>${esc(site.location)}</li>
+          </ul>
+        </header>
+
+        <div class="sheet__grid">
+          <div class="sheet__main">
+            <section class="sheet__sec">
+              <h3>Profile</h3>
+              <p>${esc(hero.intro)}</p>
+            </section>
+
+            <section class="sheet__sec">
+              <h3>Experience</h3>
+              ${timeline.map(resumeJobBlock).join('\n              ')}
+            </section>
+
+            <section class="sheet__sec">
+              <h3>Selected projects</h3>
+              ${topProjects.map(resumeProjectBlock).join('\n              ')}
+              <p class="sheet__footnote">Complete project archive at ${site.url.replace('https://', '')} — ${projects.length} projects in total.</p>
+            </section>
+          </div>
+
+          <aside class="sheet__rail">
+            <section class="sheet__sec">
+              <h3>Highlights</h3>
+              ${stats
+                .slice(0, 2)
+                .map((s) => `<div class="sheet__stat"><b>${esc(String(s.value))}${esc(s.suffix)}</b><span>${esc(s.label)}</span></div>`)
+                .join('\n              ')}
+            </section>
+
+            <section class="sheet__sec">
+              <h3>Technical skills</h3>
+              ${stack
+                .map((g) => `<div class="sheet__skill"><h4>${esc(g.group)}</h4><p>${g.items.map((i) => esc(i)).join(', ')}</p></div>`)
+                .join('\n              ')}
+            </section>
+
+            <section class="sheet__sec">
+              <h3>Languages</h3>
+              <p>English, Hindi, Gujarati</p>
+            </section>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+${cta()}
+${footer()}
+${foot()}`;
+}
+
 function page404() {
   return `${head({ title: `Page not found — ${site.name}`, desc: 'That page does not exist.', path: '404.html' })}
 ${header()}
@@ -1075,7 +1242,7 @@ function manifest() {
 }
 
 function sitemap() {
-  const pages = ['', 'work.html', 'services.html', 'about.html', 'contact.html', ...projects.map((p) => `work/${p.slug}.html`)];
+  const pages = ['', 'work.html', 'services.html', 'about.html', 'resume.html', 'contact.html', ...projects.map((p) => `work/${p.slug}.html`)];
   const today = new Date().toISOString().slice(0, 10);
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.w3.org/1999/sitemaps/schema/0.9">
@@ -1115,6 +1282,7 @@ written.push(write('index.html', pageIndex()));
 written.push(write('work.html', pageWork()));
 written.push(write('services.html', pageServices()));
 written.push(write('about.html', pageAbout()));
+written.push(write('resume.html', pageResume()));
 written.push(write('contact.html', pageContact()));
 written.push(write('404.html', page404()));
 projects.forEach((p, i) => written.push(write(`work/${p.slug}.html`, pageCase(p, i))));
