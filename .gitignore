@@ -1,4 +1,15 @@
-node_modules/
+# Next.js
+/.next/
+/out/
+*.tsbuildinfo
+
+# Dependencies
+/node_modules/
+
+# Env
+.env*.local
+
+# Misc
 .DS_Store
 Thumbs.db
 *.log

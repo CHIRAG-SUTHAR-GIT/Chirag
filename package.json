@@ -1,12 +1,29 @@
 {
   "name": "chirag-suthar-portfolio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Portfolio of Chirag Suthar — Python & full-stack developer. Static site, no runtime dependencies.",
-  "type": "module",
+  "description": "Portfolio of Chirag Suthar — Python & full-stack developer. Next.js + TypeScript, deployed on Node.js.",
   "scripts": {
-    "build": "node tools/build.mjs",
-    "serve": "python3 -m http.server 8000"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "gen:resume-pdf": "node scripts/gen-resume-pdf.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.25",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "typescript": "5.7.3"
+  },
+  "overrides": {
+    "postcss": "8.5.28"
   },
   "author": "Chirag Suthar",
   "license": "UNLICENSED"
