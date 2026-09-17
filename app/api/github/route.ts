@@ -11,19 +11,21 @@ import { NextResponse } from 'next/server';
  * placeholders instead of erroring.
  *
  * With GITHUB_TOKEN set (a fine-grained PAT for this account, read-only
- * "Metadata" access, never exposed to the client), stats are read from the
- * authenticated /user and /user/repos endpoints so the repo and star
- * counts include private repos — matching what the account owner sees on
+ * "Metadata" access, never exposed to the client), the repo and star
+ * counts come from /user/repos with the token attached, so the list
+ * includes private repos too — matching what the account owner sees on
  * their own profile, not just what an unauthenticated visitor could see.
- * Without the token, it degrades to the public-only counts anyone gets
- * from the unauthenticated API.
+ * (Deliberately not using /user's `total_private_repos` field: GitHub
+ * only returns that for classic tokens/OAuth apps, not fine-grained ones —
+ * counting the repo list itself works with either.) Without the token, it
+ * degrades to the public-only counts anyone gets from the unauthenticated
+ * API.
  */
 
 export const revalidate = 3600; // 1 hour
 
 interface GithubUser {
   public_repos?: number;
-  total_private_repos?: number;
   followers?: number;
 }
 interface GithubRepo {
@@ -68,8 +70,7 @@ export async function GET(request: Request) {
     const [userRes, repos] = await Promise.all([fetch(userUrl, { headers, next: { revalidate } }), fetchAllRepos(headers, authed, user)]);
 
     const userData: GithubUser = userRes.ok ? await userRes.json() : {};
-    const hasPrivateCount = authed && typeof userData.total_private_repos === 'number';
-    const repoCount = hasPrivateCount ? (userData.public_repos ?? 0) + (userData.total_private_repos ?? 0) : userData.public_repos ?? null;
+    const repoCount = authed ? (repos === null ? null : repos.length) : userData.public_repos ?? null;
     const stars = repos === null ? null : repos.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0);
 
     return NextResponse.json(
