@@ -5,20 +5,42 @@ import { NextResponse } from 'next/server';
  *
  * Runs on Node.js, not in the visitor's browser: one request from this
  * server refreshes the cache for everyone (`next: { revalidate }`), so a
- * portfolio getting traffic never trips GitHub's unauthenticated rate
- * limit (60 requests/hour) the way a client-side fetch from every visitor
- * eventually would. Falls back to null fields on any upstream failure so
- * the widget degrades to its dash placeholders instead of erroring.
+ * portfolio getting traffic never trips GitHub's rate limit the way a
+ * client-side fetch from every visitor eventually would. Falls back to
+ * null fields on any upstream failure so the widget degrades to its dash
+ * placeholders instead of erroring.
+ *
+ * With GITHUB_TOKEN set (a fine-grained PAT for this account, read-only
+ * "Metadata" access, never exposed to the client), stats are read from the
+ * authenticated /user and /user/repos endpoints so the repo and star
+ * counts include private repos — matching what the account owner sees on
+ * their own profile, not just what an unauthenticated visitor could see.
+ * Without the token, it degrades to the public-only counts anyone gets
+ * from the unauthenticated API.
  */
 
 export const revalidate = 3600; // 1 hour
 
 interface GithubUser {
   public_repos?: number;
+  total_private_repos?: number;
   followers?: number;
 }
 interface GithubRepo {
   stargazers_count?: number;
+}
+
+async function fetchAllRepos(headers: HeadersInit, authed: boolean, user: string): Promise<GithubRepo[]> {
+  const repos: GithubRepo[] = [];
+  const base = authed ? 'https://api.github.com/user/repos?affiliation=owner' : `https://api.github.com/users/${user}/repos`;
+  for (let page = 1; page <= 5; page++) {
+    const res = await fetch(`${base}&per_page=100&page=${page}`, { headers, next: { revalidate } });
+    if (!res.ok) break;
+    const batch: GithubRepo[] = await res.json();
+    repos.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return repos;
 }
 
 export async function GET(request: Request) {
@@ -28,24 +50,27 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'invalid user' }, { status: 400 });
   }
 
-  const headers = { 'User-Agent': 'chirag-suthar-portfolio', Accept: 'application/vnd.github+json' };
+  const token = process.env.GITHUB_TOKEN;
+  const authed = Boolean(token);
+  const headers: HeadersInit = {
+    'User-Agent': 'chirag-suthar-portfolio',
+    Accept: 'application/vnd.github+json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 
   try {
-    const [userRes, reposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${user}`, { headers, next: { revalidate } }),
-      fetch(`https://api.github.com/users/${user}/repos?per_page=100`, { headers, next: { revalidate } }),
-    ]);
+    // /user (no username) only resolves for the token's own account — fine
+    // here, since this portfolio only ever reports its own owner's stats.
+    const userUrl = authed ? 'https://api.github.com/user' : `https://api.github.com/users/${user}`;
+    const [userRes, repos] = await Promise.all([fetch(userUrl, { headers, next: { revalidate } }), fetchAllRepos(headers, authed, user)]);
 
     const userData: GithubUser = userRes.ok ? await userRes.json() : {};
-    const repos: GithubRepo[] | null = reposRes.ok ? await reposRes.json() : null;
-    const stars = Array.isArray(repos) ? repos.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0) : null;
+    const hasPrivateCount = authed && typeof userData.total_private_repos === 'number';
+    const repoCount = hasPrivateCount ? (userData.public_repos ?? 0) + (userData.total_private_repos ?? 0) : userData.public_repos ?? null;
+    const stars = repos.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0);
 
     return NextResponse.json(
-      {
-        repos: userData.public_repos ?? null,
-        followers: userData.followers ?? null,
-        stars,
-      },
+      { repos: repoCount, followers: userData.followers ?? null, stars },
       { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } }
     );
   } catch {
