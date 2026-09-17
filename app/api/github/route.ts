@@ -30,12 +30,15 @@ interface GithubRepo {
   stargazers_count?: number;
 }
 
-async function fetchAllRepos(headers: HeadersInit, authed: boolean, user: string): Promise<GithubRepo[]> {
+/** Returns `null` (rather than an empty array) when the very first page
+ * fails, so a rate-limited or unauthorized request reads as "unknown" —
+ * not silently as "this account has zero repos". */
+async function fetchAllRepos(headers: HeadersInit, authed: boolean, user: string): Promise<GithubRepo[] | null> {
   const repos: GithubRepo[] = [];
   const base = authed ? 'https://api.github.com/user/repos?affiliation=owner' : `https://api.github.com/users/${user}/repos`;
   for (let page = 1; page <= 5; page++) {
     const res = await fetch(`${base}&per_page=100&page=${page}`, { headers, next: { revalidate } });
-    if (!res.ok) break;
+    if (!res.ok) return page === 1 ? null : repos;
     const batch: GithubRepo[] = await res.json();
     repos.push(...batch);
     if (batch.length < 100) break;
@@ -67,7 +70,7 @@ export async function GET(request: Request) {
     const userData: GithubUser = userRes.ok ? await userRes.json() : {};
     const hasPrivateCount = authed && typeof userData.total_private_repos === 'number';
     const repoCount = hasPrivateCount ? (userData.public_repos ?? 0) + (userData.total_private_repos ?? 0) : userData.public_repos ?? null;
-    const stars = repos.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0);
+    const stars = repos === null ? null : repos.reduce((sum, r) => sum + (r.stargazers_count ?? 0), 0);
 
     return NextResponse.json(
       { repos: repoCount, followers: userData.followers ?? null, stars },
