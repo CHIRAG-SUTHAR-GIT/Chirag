@@ -517,7 +517,7 @@ export const projects: Project[] = [
     metrics: [{ value: '100%', label: 'designed and built in-house' }],
     cover: { src: null, alt: '', ...D, chrome: 'diagram', diagram: 'craft' },
     gallery: [],
-    links: [{ label: 'Live site', href: 'https://imperialcraftstudio.in/', kind: 'live' }],
+    links: [{ label: 'Live site', href: 'https://imperialcraftstudio.com/', kind: 'live' }],
     stack: ['HTML', 'CSS', 'JavaScript'],
     problem: 'A craft studio sells taste. The site had to be the first proof of it, which meant the design could not be borrowed from anywhere.',
     approach: 'Brand direction, layout, motion and build were all done in-house, with the work itself given the room it needs and the interface kept out of its way.',
