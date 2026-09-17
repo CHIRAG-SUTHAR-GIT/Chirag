@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { Project, ProjectGroup } from '@/lib/data/projects';
+import { Artwork } from './Artwork';
 import { IconArrow } from './icons';
 
 type FilterKey = 'all' | ProjectGroup | 'web' | 'data' | 'automation' | 'mobile';
@@ -36,9 +37,9 @@ function tagsFor(p: Project): FilterKey[] {
 
 export function WorkArchive({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<FilterKey>('all');
-  const [peekSrc, setPeekSrc] = useState<string | null>(null);
+  const [peekProject, setPeekProject] = useState<Project | null>(null);
   const [peekPos, setPeekPos] = useState({ x: 0, y: 0 });
-  const peekVisible = peekSrc !== null;
+  const peekVisible = peekProject !== null;
   const rafRef = useRef<number>(0);
   const targetRef = useRef({ x: 0, y: 0 });
 
@@ -85,8 +86,8 @@ export function WorkArchive({ projects }: { projects: Project[] }) {
             className="arch__row"
             href={`/work/${p.slug}`}
             data-cursor="Open"
-            onMouseEnter={() => p.cover.src && setPeekSrc(`/assets/img/work/${p.cover.src}@sm.webp`)}
-            onMouseLeave={() => setPeekSrc(null)}
+            onMouseEnter={() => setPeekProject(p)}
+            onMouseLeave={() => setPeekProject(null)}
           >
             <span className="arch__n">{String(i + 1).padStart(2, '0')}</span>
             <span>
@@ -105,10 +106,7 @@ export function WorkArchive({ projects }: { projects: Project[] }) {
       </div>
 
       <div className={`peek${peekVisible ? ' on' : ''}`} style={{ left: peekPos.x, top: peekPos.y }} aria-hidden="true">
-        {peekSrc && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={peekSrc} alt="" width={340} height={212} />
-        )}
+        {peekProject && <Artwork kind={peekProject.cover.diagram ?? 'craft'} accent={peekProject.accent} />}
       </div>
     </>
   );

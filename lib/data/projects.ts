@@ -93,7 +93,7 @@ export const projects: Project[] = [
       { value: '50', label: 'files per run' },
       { value: '33', label: 'districts matched' },
     ],
-    cover: { src: 'detalenc', alt: 'DataLens for Cyber Cell — the upload and module sidebar of the fraud analysis tool', ...D, chrome: 'browser' },
+    cover: { src: 'detalenc', alt: 'DataLens for Cyber Cell — the upload and module sidebar of the fraud analysis tool', ...D, chrome: 'browser', diagram: 'pivot' },
     gallery: [{ src: 'detalenc', alt: 'The DataLens upload screen with the module sidebar', caption: 'The working surface: every analysis module one click away, and an ingest that takes fifty files at a time.', ...D }],
     links: [
       { label: 'Live app', href: 'https://dailyreport-v2.streamlit.app/', kind: 'live' },
@@ -375,7 +375,7 @@ export const projects: Project[] = [
       { value: '7', label: 'analysis modes' },
       { value: '7', label: 'result views' },
     ],
-    cover: { src: 'wallet', alt: 'Wallet Intelligence Dashboard — analysis mode selection and report upload', ...D, chrome: 'browser' },
+    cover: { src: 'wallet', alt: 'Wallet Intelligence Dashboard — analysis mode selection and report upload', ...D, chrome: 'browser', diagram: 'flow' },
     gallery: [{ src: 'wallet', alt: 'The analysis type selector and dual upload panels', caption: 'Seven analysis modes, from withdrawal history to a custom sheet-and-column pick.', ...D }],
     links: [{ label: 'Source', href: 'https://github.com/CHIRAG-SUTHAR-GIT/wallet-intelligence-dashboard', kind: 'code' }],
     stack: ['Python', 'Streamlit', 'pandas', 'NumPy', 'Altair', 'NetworkX', 'XlsxWriter'],
@@ -419,7 +419,7 @@ export const projects: Project[] = [
       { value: '360°', label: 'in-house panorama viewer' },
       { value: '0', label: 'scroll-jacking libraries' },
     ],
-    cover: { src: 'radhe', alt: 'Radhe Design Studio homepage — split hero with an interior photograph and the studio wordmark', ...D, chrome: 'browser' },
+    cover: { src: 'radhe', alt: 'Radhe Design Studio homepage — split hero with an interior photograph and the studio wordmark', ...D, chrome: 'browser', diagram: 'craft' },
     mobile: { src: 'radhe-m', alt: 'Radhe Design Studio on a phone', ...M },
     gallery: [
       { src: 'radhe', alt: 'Radhe Design Studio homepage hero', caption: 'The split hero: photography on one side, a gold-on-black masthead on the other, with animated practice metrics beneath.', ...D },
@@ -469,7 +469,7 @@ export const projects: Project[] = [
       { value: '13', label: 'services catalogued' },
       { value: '1', label: 'admin panel running the whole thing' },
     ],
-    cover: { src: 'veer', alt: 'Veer Aluminium homepage — a dark cinematic hero reading Transforming Spaces With Premium Aluminium and Glass Solutions', ...D, chrome: 'browser' },
+    cover: { src: 'veer', alt: 'Veer Aluminium homepage — a dark cinematic hero reading Transforming Spaces With Premium Aluminium and Glass Solutions', ...D, chrome: 'browser', diagram: 'automation' },
     mobile: { src: 'veer-m', alt: 'Veer Aluminium on a phone', ...M },
     gallery: [
       { src: 'veer', alt: 'The Veer Aluminium homepage hero', caption: 'Parallax hero with slow zoom, glassmorphism cards and animated counters.', ...D },
@@ -546,7 +546,7 @@ export const projects: Project[] = [
       { value: '18', label: 'tour packages' },
       { value: '0', label: 'npm dependencies' },
     ],
-    cover: { src: 'unique-holidays', alt: 'Unique Holidays homepage — a full-bleed mountain landscape behind the wordmark', ...D, chrome: 'browser' },
+    cover: { src: 'unique-holidays', alt: 'Unique Holidays homepage — a full-bleed mountain landscape behind the wordmark', ...D, chrome: 'browser', diagram: 'roster' },
     mobile: { src: 'unique-holidays-m', alt: 'Unique Holidays on a phone', ...M },
     gallery: [
       { src: 'unique-holidays', alt: 'The Unique Holidays homepage hero', caption: 'A full-bleed scene behind the brand, with the trip-search widget one scroll below.', ...D },
@@ -588,7 +588,7 @@ export const projects: Project[] = [
       { value: '20', label: 'tour packages' },
       { value: '1 tap', label: 'to a pre-filled booking chat' },
     ],
-    cover: { src: 'eva', alt: 'Eva Journeys homepage — an aerial coastline behind the words Discover Your Next Great Adventure', ...D, chrome: 'browser' },
+    cover: { src: 'eva', alt: 'Eva Journeys homepage — an aerial coastline behind the words Discover Your Next Great Adventure', ...D, chrome: 'browser', diagram: 'mobile' },
     mobile: { src: 'eva-m', alt: 'Eva Journeys on a phone', ...M },
     gallery: [
       { src: 'eva', alt: 'The Eva Journeys homepage hero', caption: 'Aerial hero, dotted route line, and the search and booking calls to action above the fold.', ...D },
@@ -662,7 +662,7 @@ export const projects: Project[] = [
       { value: '5', label: 'granule types catalogued' },
       { value: '2 taps', label: 'from product to a bulk enquiry' },
     ],
-    cover: { src: 'krishna', alt: 'Krishna Enterprise homepage — a dark hero reading Leading Plastic Recycling Solutions', ...D, chrome: 'browser' },
+    cover: { src: 'krishna', alt: 'Krishna Enterprise homepage — a dark hero reading Leading Plastic Recycling Solutions', ...D, chrome: 'browser', diagram: 'ledger' },
     mobile: { src: 'krishna-m', alt: 'Krishna Enterprise on a phone', ...M },
     gallery: [
       { src: 'krishna', alt: 'The Krishna Enterprise homepage hero', caption: 'MSME and GST credentials stated up front, because bulk buyers check them first.', ...D },

@@ -87,13 +87,13 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="lede rv rv-d2">
-              Every screenshot below was captured from the real product. Where a project runs on live case data, there is a diagram instead of a demo
-              and a straight explanation of why.
+              Each cover below is generated, not a screenshot — most of what I build runs on live case data with nothing to show publicly. The
+              outcomes and links underneath are real.
             </p>
           </div>
           <div className="work-grid">
-            {featured.map((p, i) => (
-              <WorkCard project={p} key={p.slug} priority={i === 0} />
+            {featured.map((p) => (
+              <WorkCard project={p} key={p.slug} />
             ))}
           </div>
           <p style={{ marginTop: 'clamp(2.5rem,5vw,4rem)' }} className="rv">

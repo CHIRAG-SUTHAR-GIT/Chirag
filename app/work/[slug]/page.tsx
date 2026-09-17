@@ -89,7 +89,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
               </div>
 
               <div className="case-shot rv rv-d3" data-para="18">
-                <ProjectShot project={p} priority />
+                <ProjectShot project={p} />
               </div>
 
               <dl className="case-facts rv">

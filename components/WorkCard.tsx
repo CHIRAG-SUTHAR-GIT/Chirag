@@ -3,18 +3,23 @@ import type { Project } from '@/lib/data/projects';
 import { ProjectShot } from './ProjectShot';
 import { IconArrow } from './icons';
 
-export function WorkCard({ project, priority = false }: { project: Project; priority?: boolean }) {
+export function WorkCard({ project }: { project: Project }) {
   const live = project.links.find((l) => l.kind === 'live');
   return (
     <article className="work-card rv" data-tilt>
       <Link className="work-card__link" href={`/work/${project.slug}`} data-cursor="View">
         <div className="work-card__shot">
-          <ProjectShot project={project} priority={priority} />
+          <ProjectShot project={project} />
         </div>
         <div className="work-card__body">
           <div>
             <h3 className="work-card__title">{project.title}</h3>
-            <p className="work-card__sub">{project.summary}</p>
+            <p className="work-card__sub">{project.subtitle}</p>
+            <ul className="work-card__points">
+              {project.outcome.slice(0, 2).map((o) => (
+                <li key={o}>{o}</li>
+              ))}
+            </ul>
             <p className="work-card__tag">{project.tag}</p>
           </div>
           <div className="pills">
@@ -24,6 +29,15 @@ export function WorkCard({ project, priority = false }: { project: Project; prio
           </div>
         </div>
       </Link>
+      {project.links.length > 0 && (
+        <div className="work-card__links">
+          {project.links.map((l) => (
+            <a key={l.href} className="tlink" href={l.href} target="_blank" rel="noopener">
+              {l.label} <IconArrow />
+            </a>
+          ))}
+        </div>
+      )}
     </article>
   );
 }
