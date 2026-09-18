@@ -131,7 +131,7 @@ export default function AboutPage() {
             </div>
             <div className="rv rv-d2">
               <div className="stack-grid">
-                {stack.slice(0, 4).map((g) => (
+                {stack.map((g) => (
                   <div className="stack-cell" key={g.group}>
                     <h3>{g.group}</h3>
                     <ul>

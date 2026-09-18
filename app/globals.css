@@ -214,7 +214,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 .glow {
   position: fixed;
-  z-index: 0;
+  z-index: -1;
   width: 46vmax;
   height: 46vmax;
   left: 0; top: 0;
@@ -834,10 +834,14 @@ body.loaded .hero__canvas { opacity: 1; }
 .step__b { color: var(--dim); font-size: 0.9375rem; max-width: 62ch; }
 
 /* ---------- stack ---------- */
-.stack-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+/* Hairlines are drawn per-cell (border-right/bottom), not as the
+   container's own background peeking through a grid gap — a trailing
+   row shorter than the column count then leaves plain empty space
+   instead of an orphaned block of "gap" colour with no cell over it. */
+.stack-grid { display: grid; border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
 @media (min-width: 760px) { .stack-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1180px) { .stack-grid { grid-template-columns: repeat(3, 1fr); } }
-.stack-cell { background: var(--bg); padding: clamp(1.4rem, 2.4vw, 2rem); }
+.stack-cell { background: var(--bg); padding: clamp(1.4rem, 2.4vw, 2rem); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .stack-cell h3 { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
 .stack-cell ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .stack-cell li {
@@ -1001,10 +1005,12 @@ body.loaded .hero__canvas { opacity: 1; }
 .metric b { display: block; font-family: var(--serif); font-size: clamp(1.8rem, 3.4vw, 2.6rem); line-height: 1; letter-spacing: -0.03em; font-weight: 400; }
 .metric span { display: block; margin-top: 0.5rem; font-size: 0.8125rem; color: var(--dim); }
 
-.feat-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+/* Hairlines per-cell, not via the container's background showing through
+   the grid gap — see the note on .stack-grid above for why. */
+.feat-grid { display: grid; border-top: 1px solid var(--line); border-left: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
 @media (min-width: 760px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1240px) { .feat-grid { grid-template-columns: repeat(3, 1fr); } }
-.feat { background: var(--bg); padding: clamp(1.4rem, 2.4vw, 2rem); transition: background-color 0.5s; }
+.feat { background: var(--bg); padding: clamp(1.4rem, 2.4vw, 2rem); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transition: background-color 0.5s; }
 .feat:hover { background: var(--surface); }
 .feat h3 { font-size: 1.0625rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 0.6rem; }
 .feat p { font-size: 0.875rem; color: var(--dim); line-height: 1.6; }
@@ -1141,7 +1147,7 @@ body.leaving .curtain { animation: curtainUp 0.55s var(--ease-io) forwards; }
 .fscan {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
@@ -1152,7 +1158,7 @@ body.leaving .curtain { animation: curtainUp 0.55s var(--ease-io) forwards; }
 /* ---------- ambient terminal feeds (live "sudo" / tree / ps snippets) ---------- */
 .term-feed {
   position: fixed;
-  z-index: 0;
+  z-index: -1;
   width: min(300px, 25vw);
   pointer-events: none;
   overflow: hidden;
@@ -1443,6 +1449,7 @@ body.leaving .curtain { animation: curtainUp 0.55s var(--ease-io) forwards; }
   gap: 1.25rem;
 }
 [data-theme="neu"] .stack-cell, [data-theme="neu"] .feat, [data-theme="neu"] .fact, [data-theme="neu"] .pcard {
+  border: none;
   border-radius: var(--r);
   box-shadow: var(--shadow);
 }
