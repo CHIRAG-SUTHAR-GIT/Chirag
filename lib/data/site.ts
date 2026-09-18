@@ -24,7 +24,7 @@ export interface SiteConfig {
 }
 
 export const site: SiteConfig = {
-  url: 'https://chirag-suthar.dev',
+  url: 'https://chirag-dusky.vercel.app',
   name: 'Chirag Suthar',
   role: 'Python & Full-Stack Developer',
   tagline: 'Data systems, automation and product engineering',
